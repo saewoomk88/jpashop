@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //생성자 접근 권한 변경 어노테이션
 public class OrderItem {
 
     @Id @GeneratedValue

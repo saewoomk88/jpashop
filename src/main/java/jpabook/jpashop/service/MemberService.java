@@ -22,6 +22,7 @@ public class MemberService {
     public Long join(Member member){
         validateDuplicateMember(member);    //중복 회원 검즘
         memberRepository.save(member);
+
         return member.getId();
     }
 
@@ -44,5 +45,9 @@ public class MemberService {
         return memberRepository.findOne(memberId);
     }
 
-
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
 }
