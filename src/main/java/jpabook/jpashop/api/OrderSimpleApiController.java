@@ -5,7 +5,7 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
-import jpabook.jpashop.repository.order.simpleQuery.OrderQueryRepository;
+import jpabook.jpashop.repository.order.simpleQuery.OrderSimpleQueryRepository;
 import jpabook.jpashop.repository.order.simpleQuery.OrderSimpleQueryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
-    private final OrderQueryRepository orderQueryRepository;
+    private final OrderSimpleQueryRepository orderQueryRepository;
 
     @GetMapping("/api/v1/simple-orders")
     public List<Order> ordersV1() {
