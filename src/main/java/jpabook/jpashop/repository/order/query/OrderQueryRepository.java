@@ -32,13 +32,7 @@ public class OrderQueryRepository {
                 .map(orderQueryDto -> orderQueryDto.getOrderId())
                 .collect(Collectors.toList());
         //그걸 파라미터로 오더아이디에 바로 넣어준다
-        List<OrderItemQueryDto> orderItems = em.createQuery(
-                "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
-                        " from OrderItem oi" +
-                        " join oi.item i" +
-                        " where oi.order.id in :orderIds", OrderItemQueryDto.class) //in 절로 한번에 가져오기
-                .setParameter("orderIds", orderIds)
-                .getResultList();
+        List<OrderItemQueryDto> orderItems = orderItemsIN(orderIds);
 
         //orderItems 를 mpa으로 바꿔서 최적화를 시킨다
         //key는 orderItemQueryDto.getOrderId 값은 OrderItemQueryDto
@@ -51,7 +45,18 @@ public class OrderQueryRepository {
         return reslut;
 
     }
-//==오더아이템 제이피큐엘 DTO==
+    //==밑의 메서드와의 차이는 in 절로 변경 ==V5
+    private List<OrderItemQueryDto> orderItemsIN(List<Long> orderIds) {
+        return em.createQuery(
+                    "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                            " from OrderItem oi" +
+                            " join oi.item i" +
+                            " where oi.order.id in :orderIds", OrderItemQueryDto.class) //in 절로 한번에 가져오기
+                    .setParameter("orderIds", orderIds)
+                    .getResultList();
+    }
+
+    //==오더아이템 제이피큐엘 DTO== V4
     private List<OrderItemQueryDto> findOrderItems(Long orderId) {
         return em.createQuery(
                 "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
@@ -61,7 +66,7 @@ public class OrderQueryRepository {
                 .setParameter("orderId", orderId)
                 .getResultList();
     }
-//==오더찾는 JQPL DTO==
+//==오더찾는 JQPL DTO== V4, V5
     private List<OrderQueryDto> findOrders() {
         return em.createQuery(
                 "select new jpabook.jpashop.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
@@ -70,5 +75,16 @@ public class OrderQueryRepository {
                         " join o.delivery d", OrderQueryDto.class)
                 .getResultList();
     }
-
+    //== V6 페이징안됨
+    public List<OrderFlactDto> findAllByDto_flat() {
+      return em.createQuery(
+                "select new " +
+                        "jpabook.jpashop.repository.order.query.OrderFlactDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+                        " from Order o" +
+                        " join o.member m" +
+                        " join o.delivery d " +
+                        "join o.orderItems oi " +
+                        "join oi.item i",OrderFlactDto.class)
+                .getResultList();
+    }
 }
